@@ -1,0 +1,353 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+    <meta charset="UTF-8">
+      <title>2020年武汉新型冠状病毒</title>
+
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="2020 wuhan Novel coronavirus">
+
+    <meta name="keywords" content="2020 wuhan Novel coronavirus 武汉肺炎 2019-nCov">
+    <meta name="author" content="cuihuan">
+    <meta name="robots" content="index,follow">
+
+
+    <link rel="stylesheet" type="text/css" href="/css/common.css"/>
+    <link rel="stylesheet" type="text/css" href="/js/zui/css/zui-theme.css"/>
+    <link rel="stylesheet" type="text/css" href="/js/zui/css/zui.css"/>
+
+    <script type="text/javascript" src="/js/jquery/jquery2.0.min.js"></script>
+    <script type="text/javascript" src="/js/common.js"></script>
+
+</head>
+
+<body>
+<nav class="navbar navbar-default">
+    <div class="container">
+        <div class="navbar-header">
+            <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
+                <span class="sr-only">武汉加油</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="#">
+                <span class="muted">武汉加油</span>
+            </a>
+        </div>
+        <div id="navbar" class="navbar-collapse collapse">
+            <ul class="nav navbar-nav">
+                <li ><a href="/" target="_self"><i class="icon icon-line-chart"></i> 全国数据</a></li>
+                <li><a href="/news" target="_self"><i class="icon icon-th"></i> 分省数据</a></li>
+<!--                <li class="active"><a href="/sars" target="_self"><i class="icon icon-globe"></i> sars对比</a></li>-->
+                <li><a href="/rumors" target="_self"><i class="icon icon-thumbs-o-down"></i> 辟谣中心</a></li>
+            </ul>
+            <ul class="nav navbar-nav navbar-right">
+                <li><a href="/statement" target="_blank"><i class="icon icon-chat"></i> 声明</a></li>
+            </ul>
+        </div>
+
+    </div>
+</nav>
+
+<div class="container">
+    <div class="alert alert-primary" style="height: 100%">
+        <div>目前来看nCoV的传播速度是高于SARS的!</div>
+    </div>
+
+    <!--<div class="alert alert-succ" style="height: 100%">-->
+        <!--基本结论：-->
+    <!--</div>-->
+    <div class="chart" id="sars-trend-chart" style="height: 25rem">
+    </div>
+
+    <hr/>
+
+    <div class="alert alert-primary" style="height: 100%">
+        自身没有医学背景，做些力所能及的事情！<br/>
+        数据已经共享，欢迎有能力的小伙伴根据数据建模，分析出更多有用的结论!<br/>
+        <hr/>
+        特别感谢<a target="_blank" href="mailto:895126066@qq.com">花季同学</a>，协助抓取世卫SARS数据!
+        <hr/>
+
+        <div style="color: #808080cf">
+            <div>备注：SARS数据从2003-03-26拉平处理</div>
+            数据源：<a href="https://www.who.int/csr/sars/country/en/" target="_blank">SARS来自世卫</a> |
+            <a href="http://www.dxy.cn/" target="_blank">nCov来自丁香园</a>
+            <div>数据下载：<a target="_blank" href="./data/sars/all">SARS </a> | <a href="./data/nCoV/latest">nCov</a></div>
+            <div>模型参考：
+                <ul>
+                    <li><a href="https://math.tongji.edu.cn/model/docs/tcumcm2003A.pdf" target="_blank">SARS传播的数学原理</a>
+                    </li>
+                    <li><a href="https://www.zhihu.com/question/367466399/answer/982673466?utm_source=qzone"
+                           target="_blank">传染病的数学模型有哪些</a></li>
+                    <li><a target="_blank"
+                           href="https://baike.baidu.com/item/%E4%BC%A0%E6%9F%93%E7%97%85%E6%A8%A1%E5%9E%8B/5130035?fr=aladdin">传染病数学模型 </a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="page-footer clear">
+
+    <div class="copyright" style="color:#999999">
+        <div >
+            请勿用于任何商业用途
+        </div>
+        <div id="cr_1">
+             交流网站：<a href="http://cuihuan.net">cuihuan.net</a>
+        </div>
+        <div id="cr_2">Copyright © <span class=""> cuihuan </span>
+        </div>
+
+    </div>
+</div>
+
+</body>
+</html>
+<script type="text/javascript" src="/js/zui/js/zui.js"></script>
+<script type="text/javascript" src="/js/echart/echarts4.min.js"></script>
+
+<script type="text/javascript">
+    var dataUrl = "https://lab.ahusmart.com/nCoV/";
+    var dataUrlBackup  = "https://lab.ahusmart.com/nCoV/";
+
+    $(document).ready(function () {
+        initChart();
+    });
+
+    var sarsData=[1114,1179,1241,1286,1346,1504,1911,1938,1996,2037,2172,2226,2269,2307,2389,2440,2631,2673,2727,2781,2899,2899,3390,3464,3800,3947,4152,4329,4537,4941,5128,5328,5511,5693,6034,6172,6340,6491,6622,6731,6881,6983,7061,7131,7172,7194,7295,7350,7387,7478,7549,7573,7629,7648,7665,7718,7732,7744,7759,7756,7756,7755,7756,7762,7769,7771,7772,7776,7780,7779,7761,7777,7777,7774,7769,7769,7765,7764,7761,7761,7759,7757,7757,7757,7754,7754,7754,7754];
+
+    var temp = [];
+    for (var i in sarsData){
+        temp.push(sarsData[i].confirm);
+        console.log(temp);
+    }
+
+    var nCovData = [];
+    var initChart = function () {
+        $.ajax({
+            url: dataUrl + 'api/overall?latest=0',
+            type: 'get',
+            success: function (res) {
+                if (res.success === true) {
+                    var chartData = res.results;
+                    var date = [];
+                    var confirmNCoV = [];
+                    var datalist = [];
+                    // init 初始数据
+                    datalist['2020/1/24'] = 897;
+                    datalist['2020/1/25'] = 1408;
+                    datalist['2020/1/26'] = 2076;
+                    datalist['2020/1/27'] = 2857;
+                    datalist['2020/1/28'] = 4630;
+                    for (var i in chartData) {
+                        var dataTime = new Date(chartData[i].updateTime);
+                        var showTime = [dataTime.getFullYear(), dataTime.getMonth() + 1, ("0" + dataTime.getDate()).slice(-2)].join('/');
+                        var dataCount = chartData[i].confirmedCount ? chartData[i].confirmedCount : chartData[i].confirmed;
+
+                        if (!datalist[showTime] || datalist[showTime] < dataCount) {
+                            datalist[showTime] = dataCount;
+                        }
+
+                    }
+
+                    // 时间排序
+                    const dataListOrdered = {};
+                    Object.keys(datalist).sort((function (a, b) {
+                        a = a.split('/').join('');
+                        b = b.split('/').join('');
+                        return a > b ? 1 : a < b ? -1 : 0;
+                    })).forEach(function (key) {
+                        dataListOrdered[key] = datalist[key];
+                    });
+
+                    // use data
+                    for (var i in dataListOrdered) {
+                        date.push(i);
+                        confirmNCoV.push(dataListOrdered[i]);
+                    }
+
+                    // 补充sars提前的日期
+                    var maxNCovDate = "";
+                    for( var i in sarsData){
+                        if (!date[i]) {
+                            // +1 天
+                            var t = new Date(maxNCovDate);
+                            t.setDate(t.getDate() + 1);
+                            maxNCovDate = t.toLocaleDateString();
+                            date.push(maxNCovDate);
+                        }
+                        maxNCovDate = date[i];
+                    }
+                    initDetailChart(date, confirmNCoV, sarsData);
+                    return;
+                }
+                alert("获取数据失败");
+            }, error: function (res) {
+                if (res.state() === "rejected" && !this.url.includes(dataUrlBackup)) {
+                    this.url = this.url.replace(dataUrl,dataUrlBackup);
+                    $.ajax(this);
+                }
+            }
+        });
+
+        var initDetailChart = function (date,confirmNCoV,confirmSARS) {
+            var orderTraceContainer = echarts.init(document.getElementById('sars-trend-chart'));
+            orderTraceContainer.showLoading({
+                text: '加载中...',
+                effect: 'whirling'
+            });
+
+
+            echartsOption  = {
+                backgroundColor: '#394056',
+                title: {
+                    text: '确诊患者数量发展趋势',
+                    textStyle: {
+                        fontWeight: 'normal',
+                        fontSize: 12,
+                        color: '#ebffa1'
+                    },
+                    left: '2%'
+                },
+                tooltip: {
+                    trigger: 'axis',
+                    axisPointer: {
+                        lineStyle: {
+                            color: '#57617B'
+                        }
+                    }
+                },
+                legend: {
+                    icon: 'rect',
+                    itemWidth: 14,
+                    itemHeight: 5,
+                    itemGap: 1,
+                    data: ['sars(非典)', 'nCov(新冠)'],
+                    right: '2%',
+                    textStyle: {
+                        fontSize: 12,
+                        color: '#F1F1F3'
+                    }
+                },
+                grid: {
+                    left: '2%',
+                    right: '2%',
+                    bottom: '2%',
+                    containLabel: true
+                },
+                xAxis: [{
+                    type: 'category',
+                    boundaryGap: false,
+                    axisLine: {
+                        lineStyle: {
+                            color: '#57617B'
+                        }
+                    },
+                    data: date
+                }
+                ],
+                yAxis: [{
+                    type: 'value',
+                    axisTick: {
+                        show: false
+                    },
+                    axisLine: {
+                        lineStyle: {
+                            color: '#57617B'
+                        }
+                    },
+                    axisLabel: {
+                        margin: 4,
+                        textStyle: {
+                            fontSize: 8
+                        }
+                    },
+                    splitLine: {
+                        lineStyle: {
+                            color: '#57617B'
+                        }
+                    }
+                }],
+                series: [{
+                    name: 'sars(非典)',
+                    type: 'line',
+                    smooth: true,
+                    symbol: 'circle',
+                    symbolSize: 5,
+                    showSymbol: false,
+                    lineStyle: {
+                        normal: {
+                            width: 1
+                        }
+                    },
+                    areaStyle: {
+                        normal: {
+                            color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [{
+                                offset: 0,
+                                color: 'rgba(137, 189, 27, 0.3)'
+                            }, {
+                                offset: 0.8,
+                                color: 'rgba(137, 189, 27, 0)'
+                            }], false),
+                            shadowColor: 'rgba(0, 0, 0, 0.1)',
+                            shadowBlur: 10
+                        }
+                    },
+                    itemStyle: {
+                        normal: {
+                            color: 'rgb(137,189,27)',
+                            borderColor: 'rgba(137,189,2,0.27)',
+                            borderWidth: 12
+
+                        }
+                    },
+                    data: confirmSARS
+                }, {
+                    name: 'nCov(新冠)',
+                    type: 'line',
+                    smooth: true,
+                    symbol: 'circle',
+                    symbolSize: 5,
+                    showSymbol: false,
+                    lineStyle: {
+                        normal: {
+                            width: 1
+                        }
+                    },
+                    areaStyle: {
+                        normal: {
+                            color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [{
+                                offset: 0,
+                                color: 'rgba(0, 136, 212, 0.3)'
+                            }, {
+                                offset: 0.8,
+                                color: 'rgba(0, 136, 212, 0)'
+                            }], false),
+                            shadowColor: 'rgba(0, 0, 0, 0.1)',
+                            shadowBlur: 10
+                        }
+                    },
+                    itemStyle: {
+                        normal: {
+                            color: 'rgb(0,136,212)',
+                            borderColor: 'rgba(0,136,212,0.2)',
+                            borderWidth: 12
+
+                        }
+                    },
+                    data: confirmNCoV
+                }]
+            };
+            orderTraceContainer.hideLoading();
+            orderTraceContainer.setOption(echartsOption);
+        }
+
+    }
+
+</script>

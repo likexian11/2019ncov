@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+    <meta charset="UTF-8">
+      <title>2020年武汉新型冠状病毒</title>
+
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="2020 wuhan Novel coronavirus">
+
+    <meta name="keywords" content="2020 wuhan Novel coronavirus 武汉肺炎 2019-nCov">
+    <meta name="author" content="cuihuan">
+    <meta name="robots" content="index,follow">
+
+
+    <link rel="stylesheet" type="text/css" href="/css/common.css"/>
+    <link rel="stylesheet" type="text/css" href="/js/zui/css/zui-theme.css"/>
+    <link rel="stylesheet" type="text/css" href="/js/zui/css/zui.css"/>
+    <link rel="stylesheet" type="text/css" href="/js/zui/lib/chosen/chosen.min.css"/>
+
+    <script type="text/javascript" src="/js/jquery/jquery2.0.min.js"></script>
+    <script type="text/javascript" src="/js/common.js"></script>
+
+</head>
+
+<body>
+<nav class="navbar navbar-default">
+    <div class="container">
+        <div class="navbar-header">
+            <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
+                <span class="sr-only">武汉加油</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="#">
+                <span class="muted">武汉加油</span>
+            </a>
+        </div>
+        <div id="navbar" class="navbar-collapse collapse">
+            <ul class="nav navbar-nav">
+                <li ><a href="/" target="_self"><i class="icon icon-line-chart"></i> 全国数据</a></li>
+                <li ><a href="/news" target="_self"><i class="icon icon-th"></i> 分省数据</a></li>
+<!--                <li><a href="/sars" target="_self"><i class="icon icon-globe"></i> sars对比</a></li>-->
+                <li class="active"><a href="/rumors" target="_self"><i class="icon icon-thumbs-o-down"></i> 辟谣中心</a></li>
+            </ul>
+            <ul class="nav navbar-nav navbar-right">
+                <li><a href="/statement" target="_blank"><i class="icon icon-chat"></i> 声明</a></li>
+            </ul>
+        </div>
+
+    </div>
+</nav>
+
+<div class="container">
+    <div class="alert alert-primary" style="height: 100%">
+        有人的地方就一定会有谣言，任何国家都一样，<span style="font-weight: bolder;color: #fe511c">所以谣言并不可怕。</span>独立思考，谣言止于智者，不传谣，不信谣！
+    <span style="font-weight: bolder;color: #fe511c;">任何声称此时有"特效药"的新闻都是谎言！</span>
+    </div>
+
+    <hr/>
+    <div class="items" >
+    </div>
+</div>
+<div class="page-footer clear">
+
+    <div class="copyright" style="color:#999999">
+        <div >
+            请勿用于任何商业用途
+        </div>
+        <div id="cr_1">
+             交流网站：<a href="http://cuihuan.net">cuihuan.net</a>
+        </div>
+        <div id="cr_2">Copyright © <span class=""> cuihuan </span>
+        </div>
+
+    </div>
+</div>
+
+</body>
+</html>
+<script type="text/javascript" src="/js/zui/js/zui.js"></script>
+<script type="text/javascript" src="/js/zui/lib/chosen/chosen.min.js"></script>
+<script type="text/javascript" src="/js/echart/echarts4.min.js"></script>
+<script type="text/javascript">
+    var dataUrl  = "https://lab.ahusmart.com/nCoV/";
+    var dataUrlBackup  = "https://lab.ahusmart.com/nCoV/";
+
+    $(document).ready(function () {
+        initRumors('湖北省');
+    });
+
+    var initRumors = function(province) {
+        $.ajax({
+            url: dataUrl + 'api/rumors?num=all',
+            type: 'get',
+            success: function (res) {
+                if (res.success===true ){
+                    var rumors = res.results;
+                    var html = "";
+                    for (var i in rumors) {
+                         html +='<div class="item">\n' +
+                            '            <div class="item-heading">\n' +
+                            '                <div class="pull-right label label-info news-province">谣言</div>\n' +
+                            '                <h4><a href="'+rumors[i].sourceUrl+'" class="news-title" target="_blank">'+ rumors[i].title+'</a></h4>\n' +
+                            '            </div>\n' +
+                            '            <div class="item-content news-detail" ><div style="color:#ff9a1f;font-weight: bolder">' + rumors[i].mainSummary+'</div><div style="color: #2a3c4a;">详情：' +rumors[i].body+'</div>'+
+                            '            </div>\n' +
+                            '        </div>';
+                    }
+
+                    $(".items").html(html);
+
+                    return ;
+                }
+                alert("获取数据失败");
+            },
+            error:function (res) {
+                if (res.state() === "rejected" && !this.url.includes(dataUrlBackup)) {
+                    this.url = this.url.replace(dataUrl, dataUrlBackup);
+                    $.ajax(this);
+                }
+            }
+        })
+
+    };
+</script>
